@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz – Reações de Substituição (estilo vestibular)</title>
+<style>
+:root{--bg:#fdf5f9;--card:#fff;--ink:#3a1c40;--mut:#7a5e80;--plum:#5b2a63;--rose:#d6457a;--rose-l:#fde4ee;--lil:#a48ad8;--lil-l:#efe8fb;--ok:#2e8b57;--bad:#c0392b;--line:#e8d6ea}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:linear-gradient(135deg,var(--plum),#8a3f86 60%,var(--rose));color:#fff;padding:2.6rem 1.2rem 2.2rem;text-align:center}
+header small{letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-size:.78rem}
+header h1{font:700 clamp(1.6rem,5vw,2.4rem)/1.2 Georgia,serif;margin:.5rem 0 .6rem}
+header p{max-width:640px;margin:0 auto;opacity:.92}
+main{max-width:820px;margin:0 auto;padding:1.4rem 1rem 3rem}
+.box{background:var(--lil-l);border-left:4px solid var(--lil);border-radius:8px;padding:.7rem 1rem;margin:0 0 1.1rem;font-size:.92rem}
+.q{border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.2rem 1.2rem;margin:0 0 1rem;background:var(--card);box-shadow:0 2px 8px rgba(91,42,99,.06)}
+.q .tag{display:inline-block;background:var(--rose);color:#fff;border-radius:20px;padding:.1rem .7rem;font-size:.74rem;font-weight:700;margin-bottom:.55rem}
+.q .ctx{font-size:.92rem;color:var(--mut);margin:0 0 .6rem;line-height:1.55}
+.q .pr{font-weight:700;margin:0 0 .7rem;font-family:Georgia,serif;font-size:1.03rem}
+.q .eq{background:#fffafd;border:1px solid var(--line);border-radius:8px;padding:.5rem .8rem;margin:0 0 .7rem;text-align:center;font-size:1rem;overflow-x:auto;white-space:nowrap}
+.q button{display:block;width:100%;text-align:left;margin:.35rem 0;padding:.6rem .8rem;border:1.5px solid var(--line);background:#fff;border-radius:9px;font:inherit;cursor:pointer;color:var(--ink)}
+.q button:hover:not(:disabled){border-color:var(--lil);background:var(--lil-l)}
+.q button.ok{background:#e3f5ea;border-color:var(--ok)}.q button.no{background:#fbe4e1;border-color:var(--bad)}
+.q .ex{display:none;font-size:.9rem;margin-top:.6rem;color:var(--mut);border-top:1px dashed var(--line);padding-top:.55rem}
+.score{position:sticky;bottom:.6rem;background:var(--plum);color:#fff;padding:.7rem 1rem;border-radius:12px;text-align:center;font-weight:700;margin-top:.4rem}
+footer{text-align:center;color:var(--mut);font-size:.82rem;padding:1rem}
+sub{font-size:.7em}
+</style>
+</head>
+<body>
+<header>
+<small>Química Orgânica · Estilo vestibular</small>
+<h1>Quiz: Reações de Substituição</h1>
+<p>10 questões no formato de prova (contexto + 5 alternativas), no mesmo estilo das provas de Química 1 e 2.</p>
+</header>
+<main>
+<div class="box"><b>Como jogar:</b> leia o contexto, escolha uma alternativa e veja a correção na hora. A questão 1 é baseada diretamente na prova de 11/07/2025.</div>
+<div id="quiz"></div>
+<div class="score" id="score"></div>
+</main>
+<footer>Material de estudo · Química · Reações de substituição</footer>
+
+<script>
+const Q=[
+{ctx:"Considere a reação de substituição do propano na presença de calor e luz, representada abaixo:",
+eq:"Propano + Br<sub>2</sub> → X (orgânico) + Y (inorgânico)",
+pr:"O nome do composto orgânico X é:",
+op:["1,2-dibromopropano","1-bromopropano","Brometo de hidrogênio","2,2-dibromopropano","2-bromopropano"],c:4,
+ex:"Em halogenação de alcanos por luz/calor, o H de carbono secundário é substituído com mais facilidade que o de carbono primário. O propano tem um carbono secundário central, então o produto principal é o 2-bromopropano."},
+
+{ctx:"O tolueno (metilbenzeno) pode reagir com Cl₂ de duas formas diferentes, dependendo da condição experimental utilizada.",
+eq:"Tolueno + Cl<sub>2</sub> —condição—→ produto + subproduto",
+pr:"Se a reação ocorrer na presença de FeCl₃ (catalisador ácido de Lewis), o cloro substitui um hidrogênio:",
+op:["Da cadeia lateral (CH₃), formando cloreto de benzila","Do anel aromático, nas posições orto e para","Do anel aromático, exclusivamente na posição meta","De forma aleatória, sem preferência de posição","Não ocorre reação nessas condições"],c:1,
+ex:"FeCl₃ direciona a substituição para o anel. Como o grupo metila é orto-para dirigente, o cloro entra nas posições orto e para em relação a ele."},
+
+{ctx:"A obtenção industrial do ácido benzenossulfônico ocorre pela reação do benzeno com ácido sulfúrico concentrado, sob aquecimento.",
+eq:"C<sub>6</sub>H<sub>6</sub> + H<sub>2</sub>SO<sub>4</sub> —Δ→ C<sub>6</sub>H<sub>5</sub>SO<sub>3</sub>H + Z",
+pr:"O subproduto Z dessa reação de substituição é:",
+op:["H₂","SO₂","H₂O","O₂","H₂S"],c:2,
+ex:"Na sulfonação, assim como na nitração, o hidrogênio retirado do anel se combina com a hidroxila do ácido, liberando água (H₂O)."},
+
+{ctx:"A síntese de Friedel-Crafts é amplamente empregada na indústria química para introduzir grupos alquila ou acila em anéis aromáticos, sempre na presença de um catalisador ácido de Lewis anidro, como o AlCl₃.",
+eq:"Benzeno + CH<sub>3</sub>Cl —AlCl<sub>3</sub>→ produto + HCl",
+pr:"O produto orgânico formado nessa reação de alquilação é:",
+op:["Fenol","Clorobenzeno","Tolueno","Ácido benzoico","Nitrobenzeno"],c:2,
+ex:"O grupo metila (–CH₃) do cloreto de metila substitui um H do anel, formando tolueno (metilbenzeno) e liberando HCl."},
+
+{ctx:"Um estudante realizou a nitração do fenol (hidroxibenzeno) com ácido nítrico diluído, sem necessidade de catalisador, já que o grupo hidroxila ativa fortemente o anel.",
+pr:"Sabendo que o grupo –OH é orto-para dirigente, os produtos principais dessa mononitração do fenol são:",
+op:["Apenas o-nitrofenol","Apenas m-nitrofenol","o-nitrofenol e p-nitrofenol","m-nitrofenol e p-nitrofenol","Uma mistura estatística nas três posições"],c:2,
+ex:"Grupos orto-para dirigentes, como o –OH, direcionam o novo substituinte para as posições orto e para, nunca para a meta."},
+
+{ctx:"O nitrobenzeno, obtido pela nitração do benzeno, é um importante intermediário industrial. Quando submetido a uma segunda substituição, seu comportamento de orientação é oposto ao dos grupos doadores de elétrons.",
+pr:"Ao halogenar o nitrobenzeno com Br₂/FeBr₃, o produto principal esperado é:",
+op:["o-bromonitrobenzeno","p-bromonitrobenzeno","m-bromonitrobenzeno","Uma mistura de orto e para, em partes iguais","Não ocorre halogenação do nitrobenzeno"],c:2,
+ex:"O grupo –NO₂ é meta dirigente (desativa o anel), então o segundo substituinte entra preferencialmente na posição meta."},
+
+{ctx:"Um farmacêutico precisa converter 1-cloropropano em 1-propanol, para uso como intermediário de síntese. Para isso, submeteu o haleto a uma hidrólise alcalina, com aquecimento.",
+eq:"CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>Cl + NaOH(aq) —Δ→ produto + NaCl",
+pr:"O produto orgânico dessa reação de substituição é:",
+op:["Propano","Propeno","1-propanol","Ácido propanoico","Propanona"],c:2,
+ex:"O grupo –OH da base substitui o halogênio do haleto, formando o álcool correspondente (1-propanol) e o sal NaCl."},
+
+{ctx:"Comparando duas reações do eteno (CH₂=CH₂) e do etano (CH₃–CH₃), ambos colocados para reagir separadamente com Br₂:",
+pr:"É correto afirmar que:",
+op:["Ambos sofrem substituição, formando os mesmos produtos","O eteno sofre adição e o etano sofre substituição (sob luz ou calor)","O eteno sofre substituição e o etano sofre adição","Nenhum dos dois reage com Br₂","Ambos sofrem adição, liberando H₂ ao final"],c:1,
+ex:"Alcenos, por terem ligação π reativa, sofrem adição à temperatura ambiente. Já os alcanos, saturados, só reagem com halogênio por substituição radicalar, sob luz ou calor."},
+
+{ctx:"Em uma indústria de detergentes, um alquilbenzeno linear é sulfonado com H₂SO₄ e depois neutralizado com NaOH para formar o tensoativo alquilbenzenossulfonato de sódio.",
+pr:"A etapa de sulfonação do anel aromático desse alquilbenzeno é classificada como uma reação de:",
+op:["Adição","Substituição","Eliminação","Oxirredução","Polimerização"],c:1,
+ex:"Um hidrogênio do anel aromático é trocado pelo grupo –SO₃H, o que caracteriza uma substituição, com liberação de H₂O."},
+
+{ctx:"O TNT (2,4,6-trinitrotolueno) é obtido a partir da nitração sucessiva do tolueno com ácido nítrico em presença de ácido sulfúrico concentrado, sob aquecimento.",
+eq:"Tolueno + 3 HNO<sub>3</sub> —H<sub>2</sub>SO<sub>4</sub>, Δ→ TNT + 3 Z",
+pr:"O subproduto Z liberado nessa tripla substituição é:",
+op:["H₂","O₂","H₂O","HCl","N₂"],c:2,
+ex:"Cada nitração libera uma molécula de água, então três nitrações sucessivas liberam 3 H₂O."}
+];
+let pts=0,done=0;const qz=document.getElementById("quiz"),sc=document.getElementById("score");
+sc.textContent="Acertos: 0 / "+Q.length;
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="q";
+  d.innerHTML=`<span class="tag">Questão ${i+1}</span>`+
+    (q.ctx?`<p class="ctx">${q.ctx}</p>`:"")+
+    (q.eq?`<div class="eq">${q.eq}</div>`:"")+
+    `<p class="pr">${q.pr}</p>`+
+    q.op.map((o,j)=>`<button data-j="${j}">${"abcde"[j]}) ${o}</button>`).join("")+
+    `<div class="ex"></div>`;
+  d.querySelectorAll("button").forEach(b=>b.onclick=()=>{const j=+b.dataset.j,bs=d.querySelectorAll("button");
+    bs.forEach(x=>x.disabled=true);bs[q.c].classList.add("ok");
+    if(j===q.c)pts++;else b.classList.add("no");
+    const ex=d.querySelector(".ex");ex.style.display="block";ex.innerHTML=(j===q.c?"<b>Correto!</b> ":"<b>Incorreto.</b> ")+q.ex;
+    done++;sc.textContent="Acertos: "+pts+" / "+Q.length+(done===Q.length?" · Fim!":"");});
+  qz.appendChild(d)});
+</script>
+</body>
+</html>
